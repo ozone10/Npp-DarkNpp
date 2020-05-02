@@ -1,0 +1,71 @@
+/*
+  Copyright (C) 2020 oZone
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+#define APSTUDIO_READONLY_SYMBOLS
+#include <windows.h>
+#undef APSTUDIO_READONLY_SYMBOLS
+
+#define STRINGIZE2(s) #s
+#define STRINGIZE(s) STRINGIZE2(s)
+
+#include "version.h"
+#ifdef _WIN64
+#define VER_BIT_STR " (64-bit)"
+#else
+#define VER_BIT_STR " (32-bit)"
+#endif //_WIN64
+
+#define VER_PLUGIN_COPYRIGHT_STR    "© " STRINGIZE(VER_PLUGIN_YEAR) " by " VER_PLUGIN_AUTHOR_STR
+#define VER_PLUGIN                  VER_PLUGIN_MAJOR,VER_PLUGIN_MINOR,VER_PLUGIN_REVISION,VER_PLUGIN_BUILD
+#define VER_PLUGIN_STR              STRINGIZE(VER_PLUGIN_MAJOR) "." STRINGIZE(VER_PLUGIN_MINOR) "." STRINGIZE(VER_PLUGIN_REVISION)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION	VER_PLUGIN
+PRODUCTVERSION	VER_PLUGIN
+FILEFLAGSMASK	0x17L
+#ifdef _DEBUG
+FILEFLAGS VS_FF_DEBUG
+#else
+FILEFLAGS 0x0L
+#endif
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_DLL
+FILESUBTYPE VFT_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName",        VER_PLUGIN_AUTHOR_STR
+            VALUE "FileDescription",    VER_PLUGIN_NAME_STR " - Notepad++ plugin" VER_BIT_STR
+            VALUE "FileVersion",        VER_PLUGIN_STR
+            VALUE "InternalName",       VER_PLUGIN_NAME_STR
+            VALUE "LegalCopyright",     VER_PLUGIN_COPYRIGHT_STR
+            VALUE "OriginalFilename",   VER_PLUGIN_NAME_STR ".dll"
+            VALUE "ProductName",        VER_PLUGIN_NAME_STR
+            VALUE "ProductVersion",     VER_PLUGIN_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
