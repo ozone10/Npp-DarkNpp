@@ -81,10 +81,10 @@ void About();
 
 inline bool IsAtLeastWin10Build(DWORD buildNumber);
 
-bool GetNppWndHandle();
 void SetMode(HMODULE hUxtheme, bool useDark);
 void SetTheme(HWND hWnd, bool useDark);
 void SetTitleBar(HWND hWnd, bool useDark);
 void SetTooltips(HWND hWnd, bool useDark);
+BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam);
 
 void SetDarkNpp();

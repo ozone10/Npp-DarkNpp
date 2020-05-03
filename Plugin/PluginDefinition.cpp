@@ -19,8 +19,6 @@
 FuncItem funcItem[nbFunc];
 NppData nppData;
 
-HWND hNppWwd = nullptr;
-
 wchar_t iniFilePath[MAX_PATH] = { '\0' };
 const wchar_t sectionName[] = L"DarkNpp";
 
@@ -30,12 +28,9 @@ const int menuItemEnableDark = 0;
 
 void PluginInit()
 {
-    if (GetNppWndHandle())
-    {
-        LoadSettings();
-        CommandMenuInit();
-        SetDarkNpp();
-    }
+    LoadSettings();
+    CommandMenuInit();
+    SetDarkNpp();
 }
 
 void CommandMenuInit()
@@ -91,29 +86,6 @@ inline bool IsAtLeastWin10Build(DWORD buildNumber)
     osvi.dwOSVersionInfoSize = sizeof(osvi);
     osvi.dwBuildNumber = buildNumber;
     return VerifyVersionInfo(&osvi, VER_BUILDNUMBER, mask) != FALSE;
-}
-
-bool GetNppWndHandle()
-{
-    if (IsAtLeastWin10Build(VER_1809))
-    {
-        HWND hWwd = FindWindow(L"Notepad++", nullptr);
-        if (hWwd != nullptr)
-        {
-            DWORD nppProcessID = 0;
-            GetWindowThreadProcessId(hWwd, &nppProcessID);
-
-            DWORD checkProcessID = 0;
-            GetWindowThreadProcessId(nppData._nppHandle, &checkProcessID);
-
-            if (checkProcessID == nppProcessID)
-            {
-                hNppWwd = hWwd;
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 void SetMode(HMODULE hUxtheme, bool useDark)
@@ -232,9 +204,22 @@ void SetTooltips(HWND hWnd, bool useDark)
     } while (hTooltip != nullptr);
 }
 
+BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam)
+{
+    const auto useDark = static_cast<BOOL>(lparam) == TRUE;
+
+    auto dwStyle = static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_STYLE));
+    if ((dwStyle & (WS_CHILD | WS_VSCROLL)) > 0)
+    {
+        SetWindowTheme(hWnd, useDark ? L"DarkMode_Explorer" : nullptr, nullptr);
+    }
+    return TRUE;
+}
+
 void SetDarkNpp()
 {
-    SetTheme(hNppWwd, enableDark);
-    SetTitleBar(hNppWwd, enableDark);
-    SetTooltips(hNppWwd, enableDark);
+    SetTheme(nppData._nppHandle, enableDark);
+    SetTitleBar(nppData._nppHandle, enableDark);
+    SetTooltips(nppData._nppHandle, enableDark);
+    EnumChildWindows(nppData._nppHandle, &ScrollBarChildProc, MAKELPARAM(enableDark ? TRUE : FALSE, 0));
 }
