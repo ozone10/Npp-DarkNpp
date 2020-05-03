@@ -19,7 +19,8 @@
 FuncItem funcItem[nbFunc];
 NppData nppData;
 
-wchar_t pluginConfigPath[MAX_PATH] = { '\0' };
+HWND hNppWwd = nullptr;
+
 wchar_t iniFilePath[MAX_PATH] = { '\0' };
 const wchar_t sectionName[] = L"DarkNpp";
 
@@ -27,29 +28,26 @@ bool enableDark = false;
 
 const int menuItemEnableDark = 0;
 
-//void pluginInit(HANDLE /*hModule*/)
-//{
-//}
+void PluginInit()
+{
+    if (GetNppWndHandle())
+    {
+        LoadSettings();
+        CommandMenuInit();
+        SetDarkNpp();
+    }
+}
 
-//void pluginCleanUp()
-//{
-//}
-
-void commandMenuInit()
+void CommandMenuInit()
 {
     funcItem[menuItemEnableDark] = { L"Enable Dark Mode", DarkCheckTag, 0, enableDark, nullptr };
     funcItem[1] = { L"Refresh", SetDarkNpp, 0, false, nullptr };
     funcItem[2] = { L"&About...", About, 0, false, nullptr };
 }
 
-//void commandMenuCleanUp()
-//{
-//}
-
 void LoadSettings()
 {
-    ::SendMessage(nppData._nppHandle, NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, reinterpret_cast<LPARAM>(pluginConfigPath));
-    wcscpy_s(iniFilePath, pluginConfigPath);
+    ::SendMessage(nppData._nppHandle, NPPM_GETPLUGINSCONFIGDIR, MAX_PATH, reinterpret_cast<LPARAM>(iniFilePath));
     ::PathAppend(iniFilePath, TEXT("\\DarkNpp.ini"));
 
     enableDark = ::GetPrivateProfileInt(sectionName, L"useDark", 1, iniFilePath) != 0;
@@ -93,6 +91,29 @@ inline bool IsAtLeastWin10Build(DWORD buildNumber)
     osvi.dwOSVersionInfoSize = sizeof(osvi);
     osvi.dwBuildNumber = buildNumber;
     return VerifyVersionInfo(&osvi, VER_BUILDNUMBER, mask) != FALSE;
+}
+
+bool GetNppWndHandle()
+{
+    if (IsAtLeastWin10Build(VER_1809))
+    {
+        HWND hWwd = FindWindow(L"Notepad++", nullptr);
+        if (hWwd != nullptr)
+        {
+            DWORD nppProcessID = 0;
+            GetWindowThreadProcessId(hWwd, &nppProcessID);
+
+            DWORD checkProcessID = 0;
+            GetWindowThreadProcessId(nppData._nppHandle, &checkProcessID);
+
+            if (checkProcessID == nppProcessID)
+            {
+                hNppWwd = hWwd;
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void SetMode(HMODULE hUxtheme, bool useDark)
@@ -178,47 +199,17 @@ void SetTitleBar(HWND hWnd, bool useDark)
     SetProp(hWnd, L"UseImmersiveDarkModeColors", reinterpret_cast<HANDLE>(static_cast<INT_PTR>(dark)));
 }
 
-//BOOL CALLBACK TooltipsChildProc(HWND hWnd, LPARAM lparam)
-//{
-//    const auto useDark = static_cast<BOOL>(lparam) == TRUE;
-//
-//    WCHAR className[64] = { 0 };
-//
-//    if (GetClassName(hWnd, className, _countof(className)) > 0)
-//    {
-//        if (wcscmp(className, TOOLTIPS_CLASS) == 0)
-//        {
-//            SetWindowTheme(hWnd, useDark ? L"DarkMode_Explorer" : nullptr, nullptr);
-//        }
-//        else if (wcscmp(className, TOOLBARCLASSNAME) == 0)
-//        {
-//            const auto hTip = reinterpret_cast<HWND>(SendMessage(hWnd, TB_GETTOOLTIPS, NULL, NULL));
-//            if (hTip != nullptr)
-//            {
-//                SetWindowTheme(hTip, useDark ? L"DarkMode_Explorer" : nullptr, nullptr);
-//            }
-//        }
-//    }
-//
-//    return TRUE;
-//}
-
-//void SetTooltips(HWND hWnd, bool useDark)
-//{
-//     EnumChildWindows(hWnd, &TooltipsChildProc, MAKELPARAM(useDark ? TRUE : FALSE, 0));
-//}
-
 void SetTooltips(HWND hWnd, bool useDark)
 {
-    DWORD ProcessID = 0;
-    GetWindowThreadProcessId(hWnd, &ProcessID);
+    DWORD processID = 0;
+    GetWindowThreadProcessId(hWnd, &processID);
     HWND hTooltip = nullptr;
     do {
         hTooltip = FindWindowEx(nullptr, hTooltip, nullptr, nullptr);
         DWORD checkProcessID = 0;
         GetWindowThreadProcessId(hTooltip, &checkProcessID);
 
-        if (checkProcessID == ProcessID)
+        if (checkProcessID == processID)
         {
             WCHAR className[64] = { 0 };
 
@@ -243,14 +234,7 @@ void SetTooltips(HWND hWnd, bool useDark)
 
 void SetDarkNpp()
 {
-    if (IsAtLeastWin10Build(VER_1809))
-    {
-        HWND hNppWwd = FindWindow(L"Notepad++", nullptr);
-        if (hNppWwd != nullptr)
-        {
-            SetTheme(hNppWwd, enableDark);
-            SetTitleBar(hNppWwd, enableDark);
-            SetTooltips(hNppWwd, enableDark);
-        }
-    }
+    SetTheme(hNppWwd, enableDark);
+    SetTitleBar(hNppWwd, enableDark);
+    SetTooltips(hNppWwd, enableDark);
 }

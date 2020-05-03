@@ -71,10 +71,8 @@ struct WINDOWCOMPOSITIONATTRIBDATA
 const TCHAR NPP_PLUGIN_NAME[] = L"DarkNpp";
 const int nbFunc = 3;
 
-//void pluginInit(HANDLE hModule);
-//void pluginCleanUp();
-void commandMenuInit();
-//void commandMenuCleanUp();
+void PluginInit();
+void CommandMenuInit();
 
 void LoadSettings();
 void SavePluginParams();
@@ -82,10 +80,11 @@ void DarkCheckTag();
 void About();
 
 inline bool IsAtLeastWin10Build(DWORD buildNumber);
+
+bool GetNppWndHandle();
 void SetMode(HMODULE hUxtheme, bool useDark);
 void SetTheme(HWND hWnd, bool useDark);
 void SetTitleBar(HWND hWnd, bool useDark);
-//BOOL CALLBACK TooltipsChildProc(HWND hWnd, LPARAM lparam);
 void SetTooltips(HWND hWnd, bool useDark);
 
 void SetDarkNpp();

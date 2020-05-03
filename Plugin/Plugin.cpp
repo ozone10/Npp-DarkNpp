@@ -19,34 +19,32 @@
 extern FuncItem funcItem[nbFunc];
 extern NppData nppData;
 
-BOOL APIENTRY DllMain(HANDLE /*hModule*/, DWORD  /*reasonForCall*/, LPVOID /*lpReserved*/)
-{/*
-    switch (reasonForCall)
-    {
-    case DLL_PROCESS_ATTACH:
-        pluginInit(hModule);
-        break;
-
-    case DLL_PROCESS_DETACH:
-        pluginCleanUp();
-        break;
-
-    case DLL_THREAD_ATTACH:
-        break;
-
-    case DLL_THREAD_DETACH:
-        break;
-    }*/
-    return TRUE;
-}
+//BOOL APIENTRY DllMain(HANDLE hModule, DWORD  reasonForCall, LPVOID /*lpReserved*/)
+//{
+//    switch (reasonForCall)
+//    {
+//    case DLL_PROCESS_ATTACH:
+//        pluginInit(hModule);
+//        break;
+//
+//    case DLL_PROCESS_DETACH:
+//        pluginCleanUp();
+//        break;
+//
+//    case DLL_THREAD_ATTACH:
+//        break;
+//
+//    case DLL_THREAD_DETACH:
+//        break;
+//    }
+//    return TRUE;
+//}
 
 
 extern "C" __declspec(dllexport) void setInfo(NppData notpadPlusData)
 {
     nppData = notpadPlusData;
-    LoadSettings();
-    commandMenuInit();
-    SetDarkNpp();
+    PluginInit();
 }
 
 extern "C" __declspec(dllexport) const TCHAR * getName()
@@ -61,7 +59,7 @@ extern "C" __declspec(dllexport) FuncItem * getFuncsArray(int* nbF)
 }
 
 
-extern "C" __declspec(dllexport) void beNotified(SCNotification * /*notifyCode*/)
+extern "C" __declspec(dllexport) void beNotified(SCNotification* /*notifyCode*/)
 {/*
     switch (notifyCode->nmhdr.code)
     {
