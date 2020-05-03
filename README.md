@@ -8,3 +8,9 @@
 Notepad++ plugin that allows to use partially dark theme on Notepad++.
 
 This is for testing purposes only.
+
+* * *
+
+<p align="center">
+  <img src="https://i.imgur.com/DiYCl8d.png">
+</p>
