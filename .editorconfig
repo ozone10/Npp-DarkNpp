@@ -11,7 +11,7 @@ indent_style = space
 [*.{c,cpp,cxx,c++,cc,cs,h,hpp,h++,hh}]
 indent_size = 4
 insert_final_newline = true
-trim_trailing_whitespace=true
+trim_trailing_whitespace = true
 
 # Visual Studio Project Files (XML)
 [*.{csproj,vcxproj,vcxproj.filters,props}]
@@ -27,3 +27,7 @@ indent_size = 2
 # Markdown
 [*.{md,markdown}]
 trim_trailing_whitespace = false
+
+#Notepad++ Headers
+[Plugin/Npp/**.h]
+indent_style = tab
