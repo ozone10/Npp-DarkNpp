@@ -6,7 +6,7 @@
 [![Total downloads](https://img.shields.io/github/downloads/ozone10/Npp-DarkNpp/total.svg)](https://github.com/ozone10/Npp-DarkNpp/releases)
 [![Licence](https://img.shields.io/github/license/ozone10/Npp-DarkNpp?color=9cf)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
-Notepad++ plugin that allows to use partially dark theme on Notepad++.  
+[Notepad++](https://github.com/notepad-plus-plus/notepad-plus-plus) plugin that allows to use partially dark theme on Notepad++.  
 Currently support: main title bar, some tooltips, some scroll bars and context menus.
 
 This is for testing purposes only.
