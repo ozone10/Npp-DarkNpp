@@ -26,6 +26,11 @@ bool enableDark = false;
 
 const int menuItemEnableDark = 0;
 
+constexpr COLORREF darkColor = 0x333333;
+constexpr COLORREF lightColor = 0xFFFFFF;
+static HBRUSH hbrDark = CreateSolidBrush(darkColor);
+static HBRUSH hbrLight = CreateSolidBrush(lightColor);
+
 void PluginInit()
 {
     LoadSettings();
@@ -196,23 +201,45 @@ void SetTooltips(HWND hWnd, bool useDark)
                     const auto hTip = reinterpret_cast<HWND>(SendMessage(hTooltip, TB_GETTOOLTIPS, NULL, NULL));
                     if (hTip != nullptr)
                     {
-                        SetWindowTheme(hTip, useDark ? L"DarkMode_Explorer" : nullptr, nullptr);
+                        SetWindowTheme(hTip, useDark ? L"DarkMode_Explorer" : L"", nullptr);
                     }
                 }
+                //else if (wcscmp(className, L"#32770") == 0) // Title bar for child windows (Find, Preference, ...)
+                //{
+                //    auto dwStyle = static_cast<DWORD>(GetWindowLongPtr(hTooltip, GWL_STYLE));
+                //    if ((dwStyle & WS_CAPTION) > 0x0L)
+                //    {
+                //        SetTitleBar(hTooltip, useDark);
+                //    }
+                //}
             }
         }
     } while (hTooltip != nullptr);
 }
 
-BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam)
+BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM /*lparam*/)
 {
-    const auto useDark = static_cast<BOOL>(lparam) == TRUE;
-
     auto dwStyle = static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_STYLE));
-    if ((dwStyle & (WS_CHILD | WS_VSCROLL)) > 0)
+    if ((dwStyle & (WS_CHILD | WS_VSCROLL)) > 0x0L)
     {
-        SetWindowTheme(hWnd, useDark ? L"DarkMode_Explorer" : nullptr, nullptr);
+        SetWindowTheme(hWnd, enableDark ? L"DarkMode_Explorer" : L"", nullptr);
     }
+
+    return TRUE;
+}
+
+BOOL CALLBACK TabBKChildProc(HWND hWnd, LPARAM /*lparam*/) // Tab background
+{
+    WCHAR className[64] = { 0 };
+    if (GetClassName(hWnd, className, _countof(className)) > 0)
+    {
+        if (wcscmp(className, WC_TABCONTROL) == 0)
+        {
+            auto hbrBkgnd = enableDark ? hbrDark : hbrLight;
+            SetClassLongPtr(hWnd, GCLP_HBRBACKGROUND, reinterpret_cast<LONG_PTR>(hbrBkgnd));
+        }
+    }
+
     return TRUE;
 }
 
@@ -221,5 +248,7 @@ void SetDarkNpp()
     SetTheme(nppData._nppHandle, enableDark);
     SetTitleBar(nppData._nppHandle, enableDark);
     SetTooltips(nppData._nppHandle, enableDark);
-    EnumChildWindows(nppData._nppHandle, &ScrollBarChildProc, MAKELPARAM(enableDark ? TRUE : FALSE, 0));
+
+    EnumChildWindows(nppData._nppHandle, &ScrollBarChildProc, NULL);
+    EnumChildWindows(nppData._nppHandle, &TabBKChildProc, NULL);
 }
