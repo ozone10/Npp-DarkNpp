@@ -72,8 +72,8 @@ void About()
     ::MessageBox(
         NULL,
         L"This is Dark Theme Notepad++ test.\n"
-        "Plugin is using undocumented WINAPI.\n"
-        "@2020 – oZone",
+        L"Plugin is using undocumented WINAPI.\n"
+        L"@2020 by oZone",
         L"About",
         MB_OK);
 }
