@@ -201,7 +201,7 @@ void SetTooltips(HWND hWnd, bool useDark)
                     const auto hTip = reinterpret_cast<HWND>(SendMessage(hTooltip, TB_GETTOOLTIPS, NULL, NULL));
                     if (hTip != nullptr)
                     {
-                        SetWindowTheme(hTip, useDark ? L"DarkMode_Explorer" : L"", nullptr);
+                        SetWindowTheme(hTip, useDark ? L"DarkMode_Explorer" : nullptr, nullptr);
                     }
                 }
                 //else if (wcscmp(className, L"#32770") == 0) // Title bar for child windows (Find, Preference, ...)
@@ -222,7 +222,7 @@ BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM /*lparam*/)
     auto dwStyle = static_cast<DWORD>(GetWindowLongPtr(hWnd, GWL_STYLE));
     if ((dwStyle & (WS_CHILD | WS_VSCROLL)) > 0x0L)
     {
-        SetWindowTheme(hWnd, enableDark ? L"DarkMode_Explorer" : L"", nullptr);
+        SetWindowTheme(hWnd, enableDark ? L"DarkMode_Explorer" : nullptr, nullptr);
     }
 
     return TRUE;
