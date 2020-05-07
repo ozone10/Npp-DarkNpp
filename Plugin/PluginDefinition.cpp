@@ -73,7 +73,7 @@ void About()
         NULL,
         L"This is Dark Theme Notepad++ test.\n"
         "Plugin is using undocumented WINAPI.\n"
-        "@2020 – oZone",
+        "@2020 â€“ oZone",
         L"About",
         MB_OK);
 }
