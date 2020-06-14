@@ -24,6 +24,8 @@ const wchar_t sectionName[] = L"DarkNpp";
 
 bool enableDark = false;
 
+bool enableTabBkgnd = true;
+
 const int menuItemEnableDark = 0;
 
 constexpr COLORREF darkColor = 0x333333;
@@ -51,6 +53,8 @@ void LoadSettings()
     ::PathAppend(iniFilePath, TEXT("\\DarkNpp.ini"));
 
     enableDark = ::GetPrivateProfileInt(sectionName, L"useDark", 1, iniFilePath) != 0;
+
+    enableTabBkgnd = ::GetPrivateProfileInt(sectionName, L"enableTabBG", 1, iniFilePath) != 0;
 }
 
 void SavePluginParams()
@@ -71,14 +75,14 @@ void About()
 {
     ::MessageBox(
         NULL,
-        L"This is Dark Theme Notepad++ test.\n"
+        L"This is Dark Mode Notepad++ test.\n"
         L"Plugin is using undocumented WINAPI.\n"
         L"@2020 by oZone",
         L"About",
         MB_OK);
 }
 
-inline bool IsAtLeastWin10Build(DWORD buildNumber)
+bool IsAtLeastWin10Build(DWORD buildNumber)
 {
     if (!IsWindows10OrGreater())
     {
@@ -228,7 +232,7 @@ BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM /*lparam*/)
     return TRUE;
 }
 
-BOOL CALLBACK TabBKChildProc(HWND hWnd, LPARAM /*lparam*/) // Tab background
+BOOL CALLBACK TabBkgndChildProc(HWND hWnd, LPARAM /*lparam*/) // Tab background
 {
     WCHAR className[64] = { 0 };
     if (GetClassName(hWnd, className, _countof(className)) > 0)
@@ -250,5 +254,9 @@ void SetDarkNpp()
     SetTooltips(nppData._nppHandle, enableDark);
 
     EnumChildWindows(nppData._nppHandle, &ScrollBarChildProc, NULL);
-    EnumChildWindows(nppData._nppHandle, &TabBKChildProc, NULL);
+
+    if (enableTabBkgnd)
+    {
+        EnumChildWindows(nppData._nppHandle, &TabBkgndChildProc, NULL);
+    }
 }

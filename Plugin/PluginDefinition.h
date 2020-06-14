@@ -79,13 +79,13 @@ void SavePluginParams();
 void DarkCheckTag();
 void About();
 
-inline bool IsAtLeastWin10Build(DWORD buildNumber);
+bool IsAtLeastWin10Build(DWORD buildNumber);
 
 void SetMode(HMODULE hUxtheme, bool useDark);
 void SetTheme(HWND hWnd, bool useDark);
 void SetTitleBar(HWND hWnd, bool useDark);
 void SetTooltips(HWND hWnd, bool useDark);
 BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam);
-BOOL CALLBACK TabBKChildProc(HWND hWnd, LPARAM lparam);
+BOOL CALLBACK TabBkgndChildProc(HWND hWnd, LPARAM lparam);
 
 void SetDarkNpp();

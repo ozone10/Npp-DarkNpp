@@ -19,7 +19,7 @@
 #define VER_PLUGIN_NAME_STR     "DarkNpp"
 #define VER_PLUGIN_MAJOR        0
 #define VER_PLUGIN_MINOR        3
-#define VER_PLUGIN_REVISION     0
+#define VER_PLUGIN_REVISION     1
 #define VER_PLUGIN_BUILD        0
 #define VER_PLUGIN_AUTHOR_STR   "oZone"
 #define VER_PLUGIN_YEAR         2020
