@@ -1,3 +1,7 @@
+# Notice
+
+## Notepad++ 8.0 comes with support for the dark mode, so this plugin is not needed anymore.
+
 # DarkNpp
 
 [![Build status](https://img.shields.io/github/workflow/status/ozone10/Npp-DarkNpp/Build/master?logo=Github)](https://github.com/ozone10/Npp-DarkNpp)
