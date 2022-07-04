@@ -22,6 +22,8 @@ This is mainly for testing purposes.
 
 <p align="center">
   <img src="https://i.imgur.com/sJm0Kke.png">
+  <img src="https://i.imgur.com/UDTmTzj.png">
+  <img src="https://i.imgur.com/fxBvFdi.png">
 </p>
 
 * * *
