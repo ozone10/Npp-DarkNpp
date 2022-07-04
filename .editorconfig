@@ -28,6 +28,6 @@ indent_size = 2
 [*.{md,markdown}]
 trim_trailing_whitespace = false
 
-#Notepad++ Headers
+# Notepad++ Headers
 [Plugin/Npp/**.h]
 indent_style = tab

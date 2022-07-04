@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2020 oZone
+  Copyright (C) 2020-2022 oZone
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -18,8 +18,8 @@
 
 #define VER_PLUGIN_NAME_STR     "DarkNpp"
 #define VER_PLUGIN_MAJOR        0
-#define VER_PLUGIN_MINOR        3
-#define VER_PLUGIN_REVISION     1
+#define VER_PLUGIN_MINOR        4
+#define VER_PLUGIN_REVISION     0
 #define VER_PLUGIN_BUILD        0
 #define VER_PLUGIN_AUTHOR_STR   "oZone"
-#define VER_PLUGIN_YEAR         2020
+#define VER_PLUGIN_YEAR         2022

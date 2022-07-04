@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2020 oZone
+  Copyright (C) 2020-2022 oZone
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -19,9 +19,13 @@
 // WinAPI
 #include <Windows.h>
 
+#include <dwmapi.h>
 #include <Shlwapi.h>
 #include <Uxtheme.h>
 #include <VersionHelpers.h>
+
+// std
+#include <string>
 
 // Npp API
 #include ".\Npp\menuCmdID.h"

@@ -1,7 +1,7 @@
 # Set the default behavior.
 *               text=auto
 
-#Visual Studio Project Files
+# Visual Studio Project Files
 *.sln           text eol=crlf
 *.csproj        text eol=crlf
 *.vcxproj       text eol=crlf
@@ -9,7 +9,7 @@
 *.filters       text eol=crlf
 *.props         text eol=crlf
 
-#Resource File
+# Resource File
 *.rc            text eol=crlf
 
 # C/C++/C# Code Files
@@ -51,4 +51,4 @@
 .gitattributes  text
 .gitignore      text
 
-#Third Party Files
+# Third Party Files

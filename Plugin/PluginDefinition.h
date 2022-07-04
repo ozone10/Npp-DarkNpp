@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2020 oZone
+  Copyright (C) 2020-2022 oZone
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -18,8 +18,13 @@
 
 #include "StdAfx.h"
 
-const DWORD VER_1809 = 17763; // Windows 10 1809 (October 2018 Update)
-const DWORD VER_1903 = 18362; // Windows 10 1903 (May 2019 Update)
+constexpr DWORD VER_1809 = 17763; // Windows 10 1809 (October 2018 Update)
+constexpr DWORD VER_1903 = 18362; // Windows 10 1903 (May 2019 Update)
+
+constexpr DWORD BUILD_WIN11 = 22000; // Windows 11 first "stable" build
+constexpr DWORD BUILD_22H2 = 22621; // Windows 11 22H2 first to support mica properly
+
+constexpr uint32_t DWMWA_MICA_EFFECT = 1029; // Windows 11 Mica undocumented for build 22000
 
 enum class PreferredAppMode {
     Default,
@@ -69,7 +74,7 @@ struct WINDOWCOMPOSITIONATTRIBDATA
 };
 
 const TCHAR NPP_PLUGIN_NAME[] = L"DarkNpp";
-const int nbFunc = 3;
+constexpr int nbFunc = 9;
 
 void PluginInit();
 void CommandMenuInit();
@@ -77,15 +82,22 @@ void CommandMenuInit();
 void LoadSettings();
 void SavePluginParams();
 void DarkCheckTag();
+void SetMicaTagNone();
+void SetMicaTagMica();
+void SetMicaTagAcrylic();
+void SetMicaTagTabbed();
+void MicaCheckTag();
 void About();
 
 bool IsAtLeastWin10Build(DWORD buildNumber);
 
-void SetMode(HMODULE hUxtheme, bool useDark);
-void SetTheme(HWND hWnd, bool useDark);
-void SetTitleBar(HWND hWnd, bool useDark);
-void SetTooltips(HWND hWnd, bool useDark);
+void SetMode(HMODULE hUxtheme);
+void SetTheme(HWND hWnd);
+void SetTitleBar(HWND hWnd);
+void SetTooltips(HWND hWnd);
 BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam);
-BOOL CALLBACK TabBkgndChildProc(HWND hWnd, LPARAM lparam);
+
+void SetMica(HWND hWnd);
 
 void SetDarkNpp();
+void SetMicaNpp();

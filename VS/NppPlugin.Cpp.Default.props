@@ -32,8 +32,8 @@
     <TargetName>$(ProjectName)</TargetName>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <SpectreMitigation>Spectre</SpectreMitigation>
+    <!--SpectreMitigation>Spectre</SpectreMitigation-->
   </PropertyGroup>
 </Project>
