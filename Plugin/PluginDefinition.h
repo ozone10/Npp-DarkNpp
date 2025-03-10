@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2020-2022 oZone
+  Copyright (C) 2020-2025 oZone10
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -20,6 +20,8 @@
 
 constexpr DWORD VER_1809 = 17763; // Windows 10 1809 (October 2018 Update)
 constexpr DWORD VER_1903 = 18362; // Windows 10 1903 (May 2019 Update)
+
+constexpr DWORD WIN10_22H2 = 19045; // Windows 10 22H2 (Last)
 
 constexpr DWORD BUILD_WIN11 = 22000; // Windows 11 first "stable" build
 constexpr DWORD BUILD_22H2 = 22621; // Windows 11 22H2 first to support mica properly
@@ -73,8 +75,27 @@ struct WINDOWCOMPOSITIONATTRIBDATA
     SIZE_T cbData;
 };
 
-const TCHAR NPP_PLUGIN_NAME[] = L"DarkNpp";
-constexpr int nbFunc = 9;
+enum AccentTypes : int {
+    ACCENT_DISABLED = 0,
+    ACCENT_ENABLE_GRADIENT = 1,
+    ACCENT_ENABLE_TRANSPARENTGRADIENT = 2,
+    ACCENT_ENABLE_BLURBEHIND = 3,
+    ACCENT_ENABLE_ACRYLICBLURBEHIND = 4,
+    ACCENT_ENABLE_HOSTBACKDROP = 5,
+    ACCENT_ENABLE_TRANSPARENT = 6
+};
+
+struct ACCENTPOLICY {
+    AccentTypes nAccentState = AccentTypes::ACCENT_DISABLED;
+    int32_t nFlags = 0;
+    uint32_t nColor = 0;
+    int32_t nAnimationId = 0;
+};
+
+using SWCA = bool (WINAPI*)(HWND hWnd, WINDOWCOMPOSITIONATTRIBDATA* wcaData);
+
+const wchar_t NPP_PLUGIN_NAME[] = L"DarkNpp";
+constexpr int nbFunc = 11;
 
 void PluginInit();
 void CommandMenuInit();
@@ -82,10 +103,12 @@ void CommandMenuInit();
 void LoadSettings();
 void SavePluginParams();
 void DarkCheckTag();
+void SetMicaTagAuto();
 void SetMicaTagNone();
 void SetMicaTagMica();
 void SetMicaTagAcrylic();
 void SetMicaTagTabbed();
+void SetTagAcrylic();
 void MicaCheckTag();
 void About();
 

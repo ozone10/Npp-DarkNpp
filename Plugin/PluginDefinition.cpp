@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2020-2022 oZone
+  Copyright (C) 2020-2025 oZone10
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -24,11 +24,11 @@ const wchar_t sectionName[] = L"DarkNpp";
 
 static bool enableDark = false;
 
-int micaType = 0;
+static int micaType = 0;
 
 constexpr int menuItemEnableDark = 0;
 constexpr int menuItemMica = menuItemEnableDark + 3;
-constexpr int menuItemAbout = menuItemMica + 5;
+constexpr int menuItemAbout = menuItemMica + 7;
 
 constexpr size_t classNameLenght = 64;
 
@@ -42,14 +42,16 @@ void PluginInit()
 
 void CommandMenuInit()
 {
-    funcItem[menuItemEnableDark] = { L"Enable Dark Mode", DarkCheckTag, 0, enableDark, nullptr };
+    funcItem[menuItemEnableDark + 0] = { L"Enable Dark Mode", DarkCheckTag, 0, enableDark, nullptr };
     funcItem[menuItemEnableDark + 1] = { L"Refresh Dark Mode", SetDarkNpp, 0, false, nullptr };
     funcItem[menuItemEnableDark + 2] = { L"---", nullptr, 0, false, nullptr };
-    funcItem[menuItemMica] = { L"None", SetMicaTagNone, 0, micaType == 0, nullptr };
-    funcItem[menuItemMica + 1] = { L"Mica", SetMicaTagMica, 0, micaType == 2, nullptr };
-    funcItem[menuItemMica + 2] = { L"Acrylic", SetMicaTagAcrylic, 0, micaType == 3, nullptr };
-    funcItem[menuItemMica + 3] = { L"Tabbed", SetMicaTagTabbed, 0, micaType == 4, nullptr };
-    funcItem[menuItemMica + 4] = { L"---", nullptr, 0, false, nullptr };
+    funcItem[menuItemMica + 0] = { L"Auto", SetMicaTagAuto, 0, micaType == 0, nullptr };
+    funcItem[menuItemMica + 1] = { L"None", SetMicaTagNone, 0, micaType == 1, nullptr };
+    funcItem[menuItemMica + 2] = { L"Mica", SetMicaTagMica, 0, micaType == 2, nullptr };
+    funcItem[menuItemMica + 3] = { L"Mica Acrylic", SetMicaTagAcrylic, 0, micaType == 3, nullptr };
+    funcItem[menuItemMica + 4] = { L"Mica Alternative", SetMicaTagTabbed, 0, micaType == 4, nullptr };
+    funcItem[menuItemMica + 5] = { L"Acrylic", SetTagAcrylic, 0, micaType == 5, nullptr };
+    funcItem[menuItemMica + 6] = { L"---", nullptr, 0, false, nullptr };
     funcItem[menuItemAbout] = { L"&About...", About, 0, false, nullptr };
 }
 
@@ -67,11 +69,10 @@ void SavePluginParams()
 {
     funcItem[menuItemEnableDark]._init2Check = enableDark;
     ::WritePrivateProfileString(sectionName, L"useDark", enableDark ? L"1" : L"0", iniFilePath);
-
-    funcItem[menuItemMica]._init2Check = (micaType == 0);
-    funcItem[menuItemMica + 1]._init2Check = (micaType == 2);
-    funcItem[menuItemMica + 2]._init2Check = (micaType == 3);
-    funcItem[menuItemMica + 3]._init2Check = (micaType == 4);
+    for (int i = 0; i < 6; i++)
+    {
+        funcItem[menuItemMica + i]._init2Check = (micaType == i);
+    }
     ::WritePrivateProfileString(sectionName, L"micaType", std::to_wstring(micaType).c_str(), iniFilePath);
 }
 
@@ -83,9 +84,15 @@ void DarkCheckTag()
     SavePluginParams();
 }
 
-void SetMicaTagNone()
+void SetMicaTagAuto()
 {
     micaType = 0;
+    MicaCheckTag();
+}
+
+void SetMicaTagNone()
+{
+    micaType = 1;
     MicaCheckTag();
 }
 
@@ -107,12 +114,21 @@ void SetMicaTagTabbed()
     MicaCheckTag();
 }
 
+void SetTagAcrylic()
+{
+    micaType = 5;
+    MicaCheckTag();
+}
+
 void MicaCheckTag()
 {
-    ::CheckMenuItem(::GetMenu(nppData._nppHandle), funcItem[menuItemMica]._cmdID, MF_BYCOMMAND | (micaType == 0 ? MF_CHECKED : MF_UNCHECKED));
-    ::CheckMenuItem(::GetMenu(nppData._nppHandle), funcItem[menuItemMica + 1]._cmdID, MF_BYCOMMAND | (micaType == 2 ? MF_CHECKED : MF_UNCHECKED));
-    ::CheckMenuItem(::GetMenu(nppData._nppHandle), funcItem[menuItemMica + 2]._cmdID, MF_BYCOMMAND | (micaType == 3 ? MF_CHECKED : MF_UNCHECKED));
-    ::CheckMenuItem(::GetMenu(nppData._nppHandle), funcItem[menuItemMica + 3]._cmdID, MF_BYCOMMAND | (micaType == 4 ? MF_CHECKED : MF_UNCHECKED));
+    const auto hMenu = ::GetMenu(nppData._nppHandle);
+
+    for (int i = 0; i < 6; i++)
+    {
+        ::CheckMenuItem(hMenu, funcItem[menuItemMica + i]._cmdID, MF_BYCOMMAND | (micaType == i ? MF_CHECKED : MF_UNCHECKED));
+    }
+
     SetMicaNpp();
     SavePluginParams();
 }
@@ -123,7 +139,7 @@ void About()
         NULL,
         L"This is Dark mode & Mica effects Notepad++ test.\n"
         L"Plugin is using undocumented WINAPI.\n"
-        L"@2020-2022 by oZone",
+        L"@2020-2025 by oZone10",
         L"About",
         MB_OK);
 }
@@ -145,7 +161,7 @@ bool IsAtLeastWin10Build(DWORD buildNumber)
 
 void SetMode(HMODULE hUxtheme)
 {
-    const auto ord135 = GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
+    const auto ord135 = ::GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
 
     if (IsAtLeastWin10Build(VER_1903))
     {
@@ -173,7 +189,7 @@ void SetMode(HMODULE hUxtheme)
 
 void SetTheme(HWND hWnd)
 {
-    const auto hUxtheme = LoadLibraryEx(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_USER_DIRS | LOAD_LIBRARY_SEARCH_SYSTEM32);
+    const auto hUxtheme = LoadLibraryEx(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
 
     if (hUxtheme == nullptr)
     {
@@ -203,15 +219,12 @@ void SetTitleBar(HWND hWnd)
     if (IsAtLeastWin10Build(BUILD_WIN11))
     {
         ::DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &dark, sizeof(dark));
-        return;
     }
-
-    if (IsAtLeastWin10Build(VER_1903))
+    else if (IsAtLeastWin10Build(VER_1903))
     {
-        const auto hUser32 = ::LoadLibraryEx(L"user32.dll", nullptr, LOAD_LIBRARY_SEARCH_USER_DIRS | LOAD_LIBRARY_SEARCH_SYSTEM32);
+        const auto hUser32 = ::LoadLibraryEx(L"user32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
         if (hUser32)
         {
-            using SWCA = bool (WINAPI*)(HWND hWnd, WINDOWCOMPOSITIONATTRIBDATA* wcaData);
             const auto _SetWindowCompositionAttribute = reinterpret_cast<SWCA>(::GetProcAddress(hUser32, "SetWindowCompositionAttribute"));
 
             if (_SetWindowCompositionAttribute != nullptr)
@@ -228,8 +241,10 @@ void SetTitleBar(HWND hWnd)
             ::FreeLibrary(hUser32);
         }
     }
-
-    ::SetProp(hWnd, L"UseImmersiveDarkModeColors", reinterpret_cast<HANDLE>(static_cast<INT_PTR>(dark)));
+    else if (IsAtLeastWin10Build(VER_1809))
+    {
+        ::SetProp(hWnd, L"UseImmersiveDarkModeColors", reinterpret_cast<HANDLE>(static_cast<INT_PTR>(dark)));
+    }
 }
 
 void SetTooltips(HWND hWnd)
@@ -295,7 +310,7 @@ BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam)
     const auto dwStyle = ::GetWindowLongPtr(hWnd, GWL_STYLE);
     if ((dwStyle & (WS_CHILD | WS_VSCROLL)) > 0x0L)
     {
-        WCHAR className[classNameLenght] = { '\0' };
+        wchar_t className[classNameLenght] = { '\0' };
         if (GetClassName(hWnd, className, classNameLenght) > 0)
         {
             if ((wcscmp(className, WC_TREEVIEW) == 0) ||
@@ -313,57 +328,73 @@ BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam)
 
 void SetMica(HWND hWnd)
 {
+    if (IsAtLeastWin10Build(WIN10_22H2))
+    {
+        const auto hUser32 = ::LoadLibraryEx(L"user32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+        if (hUser32)
+        {
+            const auto _SetWindowCompositionAttribute = reinterpret_cast<SWCA>(::GetProcAddress(hUser32, "SetWindowCompositionAttribute"));
+
+            if (_SetWindowCompositionAttribute != nullptr)
+            {
+                ACCENTPOLICY policy = { (micaType == 5) ? ACCENT_ENABLE_ACRYLICBLURBEHIND : ACCENT_DISABLED, 2, 0x01101010, 0 };
+                WINDOWCOMPOSITIONATTRIBDATA data = { WCA_ACCENT_POLICY, &policy, sizeof(ACCENTPOLICY) };
+                _SetWindowCompositionAttribute(hWnd, &data);
+            }
+            ::FreeLibrary(hUser32);
+        }
+    }
+
+    constexpr MARGINS marginsExtended = { -1 };
+    constexpr MARGINS marginsReset{};
+
     if (IsAtLeastWin10Build(BUILD_22H2))
     {
-        auto mica = DWMSBT_NONE;
+        auto mica = DWMSBT_AUTO;
         switch (micaType)
         {
-        case 1:
-        {
-            mica = DWMSBT_AUTO;
-        }
-        break;
+            case 1:
+            {
+                mica = DWMSBT_NONE;
+            }
+            break;
 
-        case 2:
-        {
-            mica = DWMSBT_MAINWINDOW;
-        }
-        break;
+            case 2:
+            {
+                mica = DWMSBT_MAINWINDOW;
+            }
+            break;
 
-        case 3:
-        {
-            mica = DWMSBT_TRANSIENTWINDOW;
-        }
-        break;
+            case 3:
+            {
+                mica = DWMSBT_TRANSIENTWINDOW;
+            }
+            break;
 
-        case 4:
-        {
-            mica = DWMSBT_TABBEDWINDOW;
-        }
-        break;
+            case 4:
+            {
+                mica = DWMSBT_TABBEDWINDOW;
+            }
+            break;
 
-        default:
-        {
-            mica = DWMSBT_NONE;
-        }
+            default:
+            {
+                mica = DWMSBT_AUTO;
+            }
         }
 
-        if (mica != DWMSBT_NONE)
-        {
-            constexpr MARGINS margins = { -1 };
-            ::DwmExtendFrameIntoClientArea(hWnd, &margins);
-        }
+        ::DwmExtendFrameIntoClientArea(hWnd, (mica != DWMSBT_AUTO) ? &marginsExtended : &marginsReset);
         ::DwmSetWindowAttribute(hWnd, DWMWA_SYSTEMBACKDROP_TYPE, &mica, sizeof(mica));
     }
     else if (IsAtLeastWin10Build(BUILD_WIN11))
     {
         const BOOL useMica = (micaType == 0);
-        if (micaType != 0)
-        {
-            constexpr MARGINS margins = { -1 };
-            ::DwmExtendFrameIntoClientArea(hWnd, &margins);
-        }
+        ::DwmExtendFrameIntoClientArea(hWnd, (micaType != 0) ? &marginsExtended : &marginsReset);
         ::DwmSetWindowAttribute(hWnd, DWMWA_MICA_EFFECT, &useMica, sizeof(useMica));
+    }
+    else
+    {
+        ::DwmExtendFrameIntoClientArea(hWnd, &marginsReset);
     }
 }
 
@@ -375,6 +406,8 @@ void SetDarkNpp()
     SetTooltips(hwnd);
 
     ::EnumChildWindows(hwnd, &ScrollBarChildProc, reinterpret_cast<LPARAM>(enableDark ? L"DarkMode_Explorer" : nullptr));
+
+    SetMica(hwnd);
 }
 
 void SetMicaNpp()

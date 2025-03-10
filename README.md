@@ -35,13 +35,19 @@ This is mainly for testing purposes.
   - Value **0** - use light mode.
   - Value **1** - use dark mode, default value.
 
-- **micaType** - Option to apply mica on main window. It is recommended to use `useDark=1`.
+- **micaType** - Option to apply mica material or other effects on main window. It is recommended to use `useDark=1` for mica materials.
 
-  - Value **0** - don't use mica, default value.
-  - Value **1** - let system choose mica type, currently do nothing, secret value.
-  - Value **2** - mica background.
-  - Value **3** - acrylic background.
-  - Value **4** - tabbed mica background.
+  - Value **0** - let system choose mica material and use it only on title bar, default value.
+  - Value **1** - don't use mica material.
+  - Value **2** - mica material.
+  - Value **3** - mica acrylic material.
+  - Value **4** - mica alternative material, found in tabbed applications.
+  - Value **5** - acrylic effect, undocumented, works in Windows 10, but can cause lag while dragging or resizing window.
+
+> [!IMPORTANT]  
+> `micaType` with other value than `0` should not be used with HDR and ACM (Auto Color Management).
+> Due to Windows bug using `micaType` with other value than `0` and/or with `useDark=0` can cause visual glitches, with HDR/ACM visual glitches are more severe (e.g. invisible controls).  
+> It is also recommended when using with `micaType=1` to turn off Settings -> Personalization > Colors -> "Show accent color on title bars and window borders" setting.
 
 * * *
 
